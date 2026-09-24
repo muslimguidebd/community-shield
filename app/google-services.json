@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "453156279637",
+    "firebase_url": "https://muslimguide-bd-default-rtdb.firebaseio.com",
+    "project_id": "muslimguide-bd",
+    "storage_bucket": "muslimguide-bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453156279637:android:39d635e9e05a38f3040bdc",
+        "android_client_info": {
+          "package_name": "com.muslimguide.shield"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVWcQEPXGKsgPV-Ls6ZZI9-2wcuouO8PM"
+        }
+      ],
+      "services": {}
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453156279637:android:39d635e9e05a38f3040bdc",
+        "android_client_info": {
+          "package_name": "com.muslimguide.bd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453156279637-luph1t348nht9q60i887kkqfhlph4q12.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muslimguide.bd",
+            "certificate_hash": "add0cb700b7928602124e7371b70f1e49bcdb6b8"
+          }
+        },
+        {
+          "client_id": "453156279637-bk9g84g4cre634fkq1fbeqma68embcj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVWcQEPXGKsgPV-Ls6ZZI9-2wcuouO8PM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453156279637-bk9g84g4cre634fkq1fbeqma68embcj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

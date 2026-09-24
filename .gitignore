@@ -1,0 +1,26 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+app/build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# APK & Builds
+*.apk
+*.aab
+/app/release/
+/app/build/
+
+# Keystores & Credentials
+*firebase-adminsdk*.json
+*credentials*.json
+*.keystore
+keyStore
+*token*.json
+*.token
+*.bak

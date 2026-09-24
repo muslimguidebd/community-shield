@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- primary color with 15 alpha (hex ~26 for 15% but wait, withAlpha(15) in flutter is 15/255 which is ~6%. In hex: 0F (which is 15 out of 255).
+         Primary color: #0F766E. So #0F0F766E -->
+    <solid android:color="#0F0F766E" />
+    <corners android:radius="12dp" />
+</shape>
