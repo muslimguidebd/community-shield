@@ -384,7 +384,7 @@ class MainActivity : AppCompatActivity() {
             frameMainAppIcon.background = roundedBg("#202563EB")
             ivMainAppIcon.setColorFilter(Color.parseColor("#38BDF8"))
             ivMainAppIcon.setImageResource(R.drawable.ic_download)
-            tvMainAppCardTitle.text = "MuslimGuideBD মূল অ্যাপ"
+            tvMainAppCardTitle.text = "মূল অ্যাপ ডাউনলোড"
             tvMainAppBadge.text = "রেকমেন্ডেড"
             tvMainAppBadge.setTextColor(Color.parseColor("#38BDF8"))
             tvMainAppBadge.background = roundedBg("#2038BDF8")
