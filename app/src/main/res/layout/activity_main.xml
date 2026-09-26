@@ -125,6 +125,9 @@
         <!-- ══════════════════════════════════════════ -->
         <!--   LAYER 1 — AUTH (card-free clean layout)  -->
         <!-- ══════════════════════════════════════════ -->
+        <!-- ══════════════════════════════════════════ -->
+        <!--   LAYER 1 — AUTH (Modern Dynamic Layout)   -->
+        <!-- ══════════════════════════════════════════ -->
         <LinearLayout
             android:id="@+id/layerAuth"
             android:layout_width="match_parent"
@@ -134,77 +137,222 @@
             android:orientation="vertical"
             android:visibility="visible">
 
+            <!-- ── CARD: স্ব-সুরক্ষা মোড (Hero Container for Self-Protection) ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMainAppAction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#161B22"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#3038BDF8"
+                app:strokeWidth="1.2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="18dp"
+                    android:paddingBottom="20dp">
+
+                    <!-- Header Row: Icon + Title + Badge -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:id="@+id/frameMainAppIcon"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_status_badge">
+
+                            <ImageView
+                                android:id="@+id/ivMainAppIcon"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_privacy_shield"
+                                app:tint="#10B981" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvMainAppCardTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="স্ব-সুরক্ষা মোড"
+                                android:textColor="#FFFFFF"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="এই ডিভাইসের নিজস্ব সুরক্ষা"
+                                android:textColor="#64748B"
+                                android:textSize="11.5sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvMainAppBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#2010B981"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="রেকমেন্ডেড"
+                            android:textColor="#10B981"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Dynamic Subtitle -->
+                    <TextView
+                        android:id="@+id/tvMainAppSubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="আপনার ডিভাইসে মুসলিম গাইড অ্যাপ ইনস্টল রয়েছে। সরাসরি অ্যাকাউন্টের সাথে সিঙ্ক করুন।"
+                        android:textColor="#94A3B8"
+                        android:textSize="13sp" />
+
+                    <!-- Primary Action 1: Auto Sync (When Main App is Installed) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAutoSyncMainApp"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="16dp"
+                        android:text="অ্যাকাউন্টের সাথে এক-ক্লিকে সিঙ্ক"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#059669"
+                        app:cornerRadius="16dp"
+                        app:elevation="4dp"
+                        app:icon="@drawable/ic_radar_rounded"
+                        app:iconGravity="textStart"
+                        app:iconPadding="10dp"
+                        app:iconSize="20dp"
+                        app:iconTint="#FFFFFF"
+                        android:visibility="gone" />
+
+                    <!-- Primary Action 2: Download Main App (When Main App is NOT Installed) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDownloadMainAppAuth"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="16dp"
+                        android:text="মূল মুসলিম গাইড অ্যাপ ডাউনলোড করুন"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#2563EB"
+                        app:cornerRadius="16dp"
+                        app:elevation="4dp"
+                        app:icon="@drawable/ic_download"
+                        app:iconGravity="textStart"
+                        app:iconPadding="10dp"
+                        app:iconSize="20dp"
+                        app:iconTint="#FFFFFF"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── DIVIDER: অথবা বাচ্চার ডিভাইসের জন্য ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="#20FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="12dp"
+                    android:text="অথবা বাচ্চার ডিভাইসের জন্য"
+                    android:textColor="#64748B"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="#20FFFFFF" />
+            </LinearLayout>
+
+            <!-- ── SECTION 2: কিউআর স্ক্যান / গ্যালারি আপলোড ── -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:lineSpacingExtra="3dp"
                 android:paddingHorizontal="16dp"
-                android:text="অভিভাবকের MuslimGuideBD অ্যাপের কিউআর কোড স্ক্যান করুন অথবা গ্যালারি থেকে কিউআর ছবি নির্বাচন করুন"
+                android:text="অভিভাবকের মুসলিম গাইড অ্যাপ থেকে কিউআর কোড স্ক্যান করে এই ডিভাইসে স্থায়ী নিরাপত্তা লিঙ্ক করুন"
                 android:textColor="#94A3B8"
-                android:textSize="13sp" />
+                android:textSize="12.5sp" />
 
-            <!-- Primary Scan Button with rounded radius and modern styling -->
+            <!-- Scan QR Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnScanQr"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginTop="20dp"
-                android:text="ট্যাপ করে স্ক্যান করুন"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:layout_height="52dp"
+                android:layout_marginTop="14dp"
+                android:text="ক্যামেরা দিয়ে স্ক্যান করুন"
+                android:textColor="#38BDF8"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                app:backgroundTint="#2563EB"
-                app:cornerRadius="18dp"
-                app:elevation="4dp"
+                app:backgroundTint="#0D38BDF8"
+                app:cornerRadius="16dp"
                 app:icon="@drawable/ic_camera"
                 app:iconGravity="textStart"
                 app:iconPadding="10dp"
-                app:iconSize="22dp"
-                app:iconTint="#FFFFFF" />
+                app:iconSize="20dp"
+                app:iconTint="#38BDF8"
+                app:strokeColor="#3538BDF8"
+                app:strokeWidth="1.2dp" />
 
-            <!-- Secondary QR Upload Button -->
+            <!-- Upload QR Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUploadQr"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="12dp"
-                android:text="কিউআর ছবি আপলোড করুন"
-                android:textColor="#60A5FA"
-                android:textSize="14sp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:text="গ্যালারি থেকে কিউআর ছবি নির্বাচন করুন"
+                android:textColor="#94A3B8"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                app:backgroundTint="#0D3B82F6"
-                app:cornerRadius="18dp"
+                app:backgroundTint="#08FFFFFF"
+                app:cornerRadius="16dp"
                 app:icon="@drawable/ic_image_upload"
                 app:iconGravity="textStart"
                 app:iconPadding="10dp"
-                app:iconSize="20dp"
-                app:iconTint="#60A5FA"
-                app:strokeColor="#353B82F6"
-                app:strokeWidth="1.2dp" />
-
-            <!-- Auto Sync Button (Visible only if MuslimGuideBD is installed on same device) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAutoSyncMainApp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="14dp"
-                android:text="MuslimGuideBD অ্যাপ থেকে অটো-সিঙ্ক করুন"
-                android:textColor="#38BDF8"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                app:backgroundTint="#0D38BDF8"
-                app:cornerRadius="16dp"
-                app:icon="@drawable/ic_radar_rounded"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
                 app:iconSize="18dp"
-                app:iconTint="#38BDF8"
-                app:strokeColor="#2538BDF8"
-                app:strokeWidth="1dp"
-                android:visibility="gone" />
+                app:iconTint="#94A3B8"
+                app:strokeColor="#20FFFFFF"
+                app:strokeWidth="1dp" />
 
         </LinearLayout>
 

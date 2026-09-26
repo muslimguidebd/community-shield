@@ -66,10 +66,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layerAdbTerminal: LinearLayout
     private lateinit var layerPaired: LinearLayout
 
-    // ── Layer 1: Auth (Card-free Styled Buttons) ──
+    // ── Layer 1: Auth (Dynamic Self-Protection & Child Pairing) ──
+    private lateinit var cardMainAppAction: MaterialCardView
+    private lateinit var frameMainAppIcon: FrameLayout
+    private lateinit var ivMainAppIcon: ImageView
+    private lateinit var tvMainAppCardTitle: TextView
+    private lateinit var tvMainAppSubtitle: TextView
+    private lateinit var tvMainAppBadge: TextView
+    private lateinit var btnAutoSyncMainApp: MaterialButton
+    private lateinit var btnDownloadMainAppAuth: MaterialButton
     private lateinit var btnScanQr: MaterialButton
     private lateinit var btnUploadQr: MaterialButton
-    private var btnAutoSyncMainApp: MaterialButton? = null
 
     // ── Layer 2: ADB Setup ────────────────────────────
     private lateinit var btnAutoActivate: MaterialCardView
@@ -257,9 +264,16 @@ class MainActivity : AppCompatActivity() {
         layerPaired      = findViewById(R.id.layerPaired)
 
         // Layer 1 — Auth
-        btnScanQr          = findViewById(R.id.btnScanQr)
-        btnUploadQr        = findViewById(R.id.btnUploadQr)
-        btnAutoSyncMainApp = findViewById(R.id.btnAutoSyncMainApp)
+        cardMainAppAction      = findViewById(R.id.cardMainAppAction)
+        frameMainAppIcon       = findViewById(R.id.frameMainAppIcon)
+        ivMainAppIcon          = findViewById(R.id.ivMainAppIcon)
+        tvMainAppCardTitle     = findViewById(R.id.tvMainAppCardTitle)
+        tvMainAppSubtitle      = findViewById(R.id.tvMainAppSubtitle)
+        tvMainAppBadge         = findViewById(R.id.tvMainAppBadge)
+        btnAutoSyncMainApp     = findViewById(R.id.btnAutoSyncMainApp)
+        btnDownloadMainAppAuth = findViewById(R.id.btnDownloadMainAppAuth)
+        btnScanQr              = findViewById(R.id.btnScanQr)
+        btnUploadQr            = findViewById(R.id.btnUploadQr)
 
         // Layer 2 — ADB Setup
         btnAutoActivate  = findViewById(R.id.btnAutoActivate)
@@ -281,15 +295,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         // Auth layer actions
-        btnScanQr.setOnClickListener { openQrScanner() }
-        btnUploadQr.setOnClickListener { galleryQrLauncher.launch("image/*") }
-        btnAutoSyncMainApp?.setOnClickListener {
+        btnDownloadMainAppAuth.setOnClickListener { openDownloadPage() }
+        btnAutoSyncMainApp.setOnClickListener {
             if (checkAndAutoAuthenticateFromMainApp()) {
                 renderState()
             } else {
                 showAutoSyncBottomSheet()
             }
         }
+
+        btnScanQr.setOnClickListener { openQrScanner() }
+        btnUploadQr.setOnClickListener { galleryQrLauncher.launch("image/*") }
 
         // ADB setup actions
         btnAutoActivate.setOnClickListener { handleAutoActivateClick() }
@@ -341,12 +357,56 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderAuthLayer() {
         tvGuardianName.visibility = View.GONE
-        setHeaderAmber(
-            badge = "● অথেন্টিকেশন প্রয়োজন",
-            description = "অভিভাবকের QR কোড স্ক্যান করে এই ডিভাইসে স্থায়ী সুরক্ষা লিঙ্ক করুন।"
-        )
+        val isInstalled = isMainAppInstalled()
+
+        if (isInstalled) {
+            setHeaderAmber(
+                badge = "● সিঙ্ক প্রয়োজন",
+                description = "মুসলিম গাইড অ্যাকাউন্টের সাথে সিঙ্ক করুন অথবা বাচ্চার জন্য কিউআর স্ক্যান করুন।"
+            )
+            cardMainAppAction.strokeColor = Color.parseColor("#40059669")
+            frameMainAppIcon.background = roundedBg("#2010B981")
+            ivMainAppIcon.setColorFilter(Color.parseColor("#10B981"))
+            ivMainAppIcon.setImageResource(R.drawable.ic_privacy_shield)
+            tvMainAppCardTitle.text = "স্ব-সুরক্ষা মোড"
+            tvMainAppBadge.text = "ইনস্টল আছে"
+            tvMainAppBadge.setTextColor(Color.parseColor("#10B981"))
+            tvMainAppBadge.background = roundedBg("#2010B981")
+            tvMainAppSubtitle.text = "আপনার ডিভাইসে MuslimGuideBD ইনস্টল রয়েছে। এক ক্লিকে অ্যাকাউন্টের সাথে সিঙ্ক করে স্ব-সুরক্ষা মোড চালু করুন।"
+            btnAutoSyncMainApp.visibility = View.VISIBLE
+            btnDownloadMainAppAuth.visibility = View.GONE
+        } else {
+            setHeaderAmber(
+                badge = "● অথেন্টিকেশন প্রয়োজন",
+                description = "স্ব-সুরক্ষার জন্য মূল অ্যাপ ডাউনলোড করুন অথবা বাচ্চার জন্য কিউআর স্ক্যান করুন।"
+            )
+            cardMainAppAction.strokeColor = Color.parseColor("#402563EB")
+            frameMainAppIcon.background = roundedBg("#202563EB")
+            ivMainAppIcon.setColorFilter(Color.parseColor("#38BDF8"))
+            ivMainAppIcon.setImageResource(R.drawable.ic_download)
+            tvMainAppCardTitle.text = "MuslimGuideBD মূল অ্যাপ"
+            tvMainAppBadge.text = "রেকমেন্ডেড"
+            tvMainAppBadge.setTextColor(Color.parseColor("#38BDF8"))
+            tvMainAppBadge.background = roundedBg("#2038BDF8")
+            tvMainAppSubtitle.text = "এই ডিভাইসে পূর্ণ স্ব-সুরক্ষা মোড সক্রিয় করতে প্রথমে মূল MuslimGuideBD অ্যাপটি ডাউনলোড করুন।"
+            btnAutoSyncMainApp.visibility = View.GONE
+            btnDownloadMainAppAuth.visibility = View.VISIBLE
+        }
         layerAuth.visibility = View.VISIBLE
-        btnAutoSyncMainApp?.visibility = if (isMainAppInstalled()) View.VISIBLE else View.GONE
+    }
+
+    private fun openDownloadPage() {
+        val urls = listOf(
+            "https://muslimguide-bd.web.app",
+            "market://details?id=com.muslimguide.bd"
+        )
+        for (url in urls) {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                return
+            } catch (_: Exception) { /* try next */ }
+        }
+        ShieldToast.showError(this, "ব্রাউজার ওপেন করা যায়নি", title = "ত্রুটি")
     }
 
     private fun renderAdbSetupLayer() {
