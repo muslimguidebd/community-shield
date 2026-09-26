@@ -81,6 +81,67 @@
 
     </LinearLayout>
 
+    <!-- Needs Update State -->
+    <LinearLayout
+        android:id="@+id/stateNeedsUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_privacy_shield"
+            app:tint="#10B981" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="অ্যাপ আপডেট প্রয়োজন"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:text="MuslimGuideBD অ্যাপের নতুন আপডেট পাওয়া গেছে। অটো-সিঙ্ক ঠিকঠাক কাজ করতে অ্যাপটি আপডেট করুন।"
+            android:textColor="#94A3B8"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUpdateMainApp"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:text="MuslimGuideBD আপডেট করুন"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="#059669"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_radar_rounded"
+            app:iconGravity="textStart"
+            app:iconPadding="10dp"
+            app:iconTint="#FFFFFF" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDismissNeedsUpdate"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="6dp"
+            android:text="এখন নয়"
+            android:textColor="#64748B"
+            android:textSize="13sp" />
+
+    </LinearLayout>
     <!-- Not Authenticated State -->
     <LinearLayout
         android:id="@+id/stateNotAuthenticated"

@@ -23,6 +23,8 @@ android {
             storePassword = "75501212"
             keyAlias = "key0"
             keyPassword = "75501212"
+            enableV1Signing = true
+            enableV2Signing = true
         }
     }
 
@@ -63,6 +65,7 @@ dependencies {
     // Firebase - RTDB for Guardian-Device linking
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-database-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     // CameraX for Live Camera QR Scanning
     val cameraxVersion = "1.4.1"

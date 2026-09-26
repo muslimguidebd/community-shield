@@ -34,6 +34,7 @@ import com.muslimguide.shield.adb.AdbWirelessNotificationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.tasks.await
 import com.google.firebase.database.FirebaseDatabase
 import android.provider.Settings as AndroidSettings
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -302,6 +303,11 @@ class MainActivity : AppCompatActivity() {
         // Paired actions
         btnHideAppIcon.setOnClickListener      { hideAppIcon() }
         btnOpenMainAppPaired.setOnClickListener { openMuslimGuideApp() }
+
+        // Online Support and Tutorials
+        findViewById<MaterialButton?>(R.id.btnOpenShieldSupport)?.setOnClickListener {
+            showShieldSupportBottomSheet()
+        }
     }
 
     // ══════════════════════════════════════════════════
@@ -393,6 +399,25 @@ class MainActivity : AppCompatActivity() {
         }
         layerPaired.visibility = View.VISIBLE
         ShieldService.start(this)
+
+        // Conditionally update the Open/Download button based on main app install state
+        if (isMainAppInstalled()) {
+            btnOpenMainAppPaired.text = "মুসলিমগাইড অ্যাপ খুলুন"
+            btnOpenMainAppPaired.setOnClickListener { openMuslimGuideApp() }
+        } else {
+            btnOpenMainAppPaired.text = "মুসলিমগাইড অ্যাপ ডাউনলোড করুন"
+            btnOpenMainAppPaired.setOnClickListener {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://muslimguide-bd.web.app")))
+                } catch (_: Exception) {
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.muslimguide.bd")))
+                    } catch (_: Exception) {
+                        ShieldToast.showError(this, "ব্রাউজার ওপেন করা যায়নি", title = "ত্রুটি")
+                    }
+                }
+            }
+        }
     }
 
     // ── Header color helpers ──────────────────────────
@@ -473,45 +498,142 @@ class MainActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.behavior.peekHeight = resources.displayMetrics.heightPixels / 2
 
-        val stateNotInstalled = view.findViewById<android.view.View>(R.id.stateNotInstalled)
+        val stateNotInstalled     = view.findViewById<android.view.View>(R.id.stateNotInstalled)
+        val stateNeedsUpdate      = view.findViewById<android.view.View?>(R.id.stateNeedsUpdate)
         val stateNotAuthenticated = view.findViewById<android.view.View>(R.id.stateNotAuthenticated)
 
-        if (!isMainAppInstalled()) {
-            stateNotInstalled.visibility = android.view.View.VISIBLE
+        fun hideAll() {
+            stateNotInstalled.visibility     = android.view.View.GONE
+            stateNeedsUpdate?.visibility     = android.view.View.GONE
             stateNotAuthenticated.visibility = android.view.View.GONE
+        }
 
+        if (!isMainAppInstalled()) {
+            hideAll(); stateNotInstalled.visibility = android.view.View.VISIBLE
             view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnDownloadMainApp)
                 .setOnClickListener {
-                    try {
-                        startActivity(Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://muslimguide-bd.web.app")))
-                    } catch (_: Exception) {
-                        startActivity(Intent(Intent.ACTION_VIEW,
-                            Uri.parse("market://details?id=com.muslimguide.bd")))
-                    }
+                    try { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://muslimguide-bd.web.app"))) }
+                    catch (_: Exception) { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.muslimguide.bd"))) }
                     dialog.dismiss()
                 }
-
             view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnDismissNotInstalled)
                 .setOnClickListener { dialog.dismiss() }
         } else {
-            stateNotInstalled.visibility = android.view.View.GONE
-            stateNotAuthenticated.visibility = android.view.View.VISIBLE
+            val installedVersionCode = try {
+                val pkgInfo = packageManager.getPackageInfo("com.muslimguide.bd", 0)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P)
+                    pkgInfo.longVersionCode.toInt()
+                else @Suppress("DEPRECATION") pkgInfo.versionCode
+            } catch (_: Exception) { 0 }
 
+            // Default: show not-authenticated state
+            hideAll(); stateNotAuthenticated.visibility = android.view.View.VISIBLE
             view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnOpenMainAppAuth)
-                .setOnClickListener {
-                    openMuslimGuideApp()
-                    dialog.dismiss()
-                }
-
+                .setOnClickListener { openMuslimGuideApp(); dialog.dismiss() }
             view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnDismissNotAuth)
                 .setOnClickListener { dialog.dismiss() }
+
+            // Async: check Firebase for latest versionCode
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val latestCode = FirebaseDatabase.getInstance()
+                        .getReference("app_config/main_app/latest_version_code")
+                        .get().await().getValue(Int::class.java) ?: 0
+                    withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        if (latestCode > 0 && installedVersionCode in 1 until latestCode && stateNeedsUpdate != null) {
+                            hideAll(); stateNeedsUpdate.visibility = android.view.View.VISIBLE
+                            view.findViewById<com.google.android.material.button.MaterialButton?>(R.id.btnUpdateMainApp)
+                                ?.setOnClickListener {
+                                    try { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.muslimguide.bd"))) }
+                                    catch (_: Exception) { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://muslimguide-bd.web.app"))) }
+                                    dialog.dismiss()
+                                }
+                            view.findViewById<com.google.android.material.button.MaterialButton?>(R.id.btnDismissNeedsUpdate)
+                                ?.setOnClickListener { dialog.dismiss() }
+                        }
+                    }
+                } catch (_: Exception) { /* stay on stateNotAuthenticated */ }
+            }
+        }
+        dialog.show()
+    }
+
+    private fun showShieldSupportBottomSheet() {
+        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_shield_support, null)
+        dialog.setContentView(view)
+        dialog.behavior.peekHeight = resources.displayMetrics.heightPixels * 3 / 4
+
+        val btnWireless = view.findViewById<MaterialCardView>(R.id.btnSupportWirelessVideo)
+        val btnQr = view.findViewById<MaterialCardView>(R.id.btnSupportQrVideo)
+        val btnPc = view.findViewById<MaterialCardView>(R.id.btnSupportPcVideo)
+        val btnWhatsapp = view.findViewById<MaterialCardView>(R.id.btnSupportWhatsapp)
+        val btnTelegram = view.findViewById<MaterialCardView>(R.id.btnSupportTelegram)
+        val btnDismiss = view.findViewById<MaterialButton>(R.id.btnDismissSupportSheet)
+
+        btnDismiss.setOnClickListener { dialog.dismiss() }
+
+        var wirelessUrl: String? = null
+        var qrUrl: String? = null
+        var pcUrl: String? = null
+        var whatsappUrl: String? = null
+        var telegramUrl: String? = null
+
+        fun openUrl(url: String?, fallbackMsg: String) {
+            if (!url.isNullOrBlank()) {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                } catch (_: Exception) {
+                    ShieldToast.showError(this, "লিঙ্কটি ওপেন করা সম্ভব হয়নি।")
+                }
+            } else {
+                ShieldToast.showWarning(this, fallbackMsg)
+            }
+        }
+
+        btnWireless.setOnClickListener {
+            openUrl(wirelessUrl, "ওয়্যারলেস টিউটোরিয়াল ভিডিও লিঙ্ক এখনো যুক্ত করা হয়নি।")
+        }
+        btnQr.setOnClickListener {
+            openUrl(qrUrl, "কিউআর স্ক্যান টিউটোরিয়াল ভিডিও লিঙ্ক এখনো যুক্ত করা হয়নি।")
+        }
+        btnPc.setOnClickListener {
+            openUrl(pcUrl, "পিসি টিউটোরিয়াল ভিডিও লিঙ্ক এখনো যুক্ত করা হয়নি।")
+        }
+        btnWhatsapp.setOnClickListener {
+            openUrl(whatsappUrl, "WhatsApp সাপোর্ট লিঙ্ক এখনো যুক্ত করা হয়নি।")
+        }
+        btnTelegram.setOnClickListener {
+            openUrl(telegramUrl, "Telegram সাপোর্ট লিঙ্ক এখনো যুক্ত করা হয়নি।")
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val snapshot = FirebaseDatabase.getInstance()
+                    .getReference("app_config/community_shield")
+                    .get().await()
+
+                if (snapshot.exists()) {
+                    wirelessUrl = snapshot.child("tutorial_wireless").getValue(String::class.java)
+                        ?: snapshot.child("wirelessUrl").getValue(String::class.java)
+                    qrUrl = snapshot.child("tutorial_qr").getValue(String::class.java)
+                        ?: snapshot.child("qrUrl").getValue(String::class.java)
+                    pcUrl = snapshot.child("tutorial_pc").getValue(String::class.java)
+                        ?: snapshot.child("pcUrl").getValue(String::class.java)
+                    whatsappUrl = snapshot.child("support_whatsapp").getValue(String::class.java)
+                        ?: snapshot.child("whatsappUrl").getValue(String::class.java)
+                    telegramUrl = snapshot.child("support_telegram").getValue(String::class.java)
+                        ?: snapshot.child("telegramUrl").getValue(String::class.java)
+                }
+            } catch (_: Exception) {
+                // Ignore or handle offline gracefully
+            }
         }
 
         dialog.show()
     }
 
-    // ══════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════    // ══════════════════════════════════════════════════
     // ADB Activation
     // ══════════════════════════════════════════════════
 

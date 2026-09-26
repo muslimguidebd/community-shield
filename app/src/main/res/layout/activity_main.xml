@@ -103,6 +103,22 @@
                     android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
+                <!-- Online Support & Tutorials Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOpenShieldSupport"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="6dp"
+                    android:text="ভিডিও গাইড ও অনলাইন সহায়তা"
+                    android:textColor="#38BDF8"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_radar_rounded"
+                    app:iconPadding="6dp"
+                    app:iconSize="16dp"
+                    app:iconTint="#38BDF8" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
